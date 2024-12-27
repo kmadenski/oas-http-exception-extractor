@@ -1,0 +1,19 @@
+{
+    "name": "krzysztofmadenski/oas-http-exception-extractor",
+    "autoload": {
+        "psr-4": {
+            "OasHttpExceptionExtractor\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Krzysztof Madeński"
+        }
+    ],
+    "require-dev": {
+        "symfony/http-kernel": "^6.4"
+    },
+    "require": {
+        "nikic/php-parser": "^5.3"
+    }
+}
