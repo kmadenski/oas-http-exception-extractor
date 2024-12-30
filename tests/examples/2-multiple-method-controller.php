@@ -1,9 +1,9 @@
 <?php
 
-namespace Examples;
+namespace OasHttpExceptionExtractor\Tests\examples;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MyClass
 {

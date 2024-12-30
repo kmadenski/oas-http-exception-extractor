@@ -1,52 +1,61 @@
 <?php
+
+declare(strict_types=1);
+
 namespace OasHttpExceptionExtractor\Parser;
 
-use OasHttpExceptionExtractor\Parser\Visitor\ExceptionResolver;
+use PhpParser\Error;
+use PhpParser\Node;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
+use PhpParser\Parser;
+use PhpParser\ParserFactory;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ExceptionParser extends AbstractParser
+/**
+ * Parser that extracts exception information from PHP code
+ */
+class ExceptionParser
 {
-    // Arrays to store exceptions
+    private Parser $parser;
+    private NodeTraverser $traverser;
+    private NameResolver $nameResolver;
+
+    /** @var array<string, string[]> Map of method names to their thrown exceptions */
     private array $allExceptions = [];
+    
+    /** @var array<string, string[]> Map of method names to their HTTP exceptions */
     private array $httpExceptions = [];
 
     public function __construct()
     {
-        parent::__construct();
+        $this->parser = (new ParserFactory())->createForHostVersion();
+        $this->traverser = new NodeTraverser();
+        $this->nameResolver = new NameResolver();
 
-        // Add the ExceptionVisitor to the traverser
-        $this->traverser->addVisitor(new ExceptionResolver($this));
+        // NameResolver must be added first to resolve names before our visitor
+        $this->traverser->addVisitor($this->nameResolver);
+        $this->traverser->addVisitor(new ExceptionVisitor($this, $this->nameResolver));
     }
 
     /**
-     * Initializes tracking for a new method.
-     *
-     * @param string $methodName
+     * Initialize exception tracking for a method
      */
     public function initializeMethod(string $methodName): void
     {
-        if (!isset($this->allExceptions[$methodName])) {
-            $this->allExceptions[$methodName] = [];
-        }
-
-        if (!isset($this->httpExceptions[$methodName])) {
-            $this->httpExceptions[$methodName] = [];
-        }
+        $this->allExceptions[$methodName] ??= [];
+        $this->httpExceptions[$methodName] ??= [];
     }
 
     /**
-     * Adds an exception to the appropriate lists.
-     *
-     * @param string $methodName
-     * @param string $exceptionClass
+     * Add an exception to the appropriate collections
      */
     public function addException(string $methodName, string $exceptionClass): void
     {
-        // Add to allExceptions
         if (!in_array($exceptionClass, $this->allExceptions[$methodName], true)) {
             $this->allExceptions[$methodName][] = $exceptionClass;
         }
 
-        // Check if it's a Symfony HttpException
         if ($this->isHttpException($exceptionClass)) {
             if (!in_array($exceptionClass, $this->httpExceptions[$methodName], true)) {
                 $this->httpExceptions[$methodName][] = $exceptionClass;
@@ -55,38 +64,36 @@ class ExceptionParser extends AbstractParser
     }
 
     /**
-     * Determines if the given exception class extends Symfony's HttpException.
-     *
-     * @param string $exceptionClass
-     * @return bool
+     * Check if the given class is a Symfony HTTP exception
      */
     private function isHttpException(string $exceptionClass): bool
     {
-        // Define the base Symfony HttpException class
-        $symfonyHttpExceptionBase = '\\Symfony\\Component\\HttpKernel\\Exception\\HttpException';
-
-        // Use reflection to determine inheritance if possible
-        if (class_exists($exceptionClass) && class_exists($symfonyHttpExceptionBase)) {
-            return is_subclass_of($exceptionClass, $symfonyHttpExceptionBase);
+        if (class_exists($exceptionClass) && class_exists(HttpException::class)) {
+            return is_subclass_of($exceptionClass, HttpException::class);
         }
 
-        // If classes do not exist (e.g., parsing without autoloading), use naming conventions
-        // For example, check if the class name ends with 'HttpException' or belongs to Symfony's namespace
-        return strpos($exceptionClass, '\\Symfony\\Component\\HttpKernel\\Exception\\') === 0 &&
-            substr($exceptionClass, -14) === 'HttpException';
+        return str_starts_with($exceptionClass, '\\Symfony\\Component\\HttpKernel\\Exception\\') 
+            && str_ends_with($exceptionClass, 'HttpException');
     }
 
     /**
-     * Parses the given PHP code and extracts exceptions thrown in each method.
+     * Parse PHP code and extract exceptions
      *
-     * @param string $code PHP code to parse.
-     * @return array Associative array with method names as keys and arrays of exception classes as values.
-     *               Includes both allExceptions and httpExceptions.
-     * @throws Error If parsing fails.
+     * @return array{
+     *     allExceptions: array<string, string[]>,
+     *     httpExceptions: array<string, string[]>
+     * }
+     * @throws Error If parsing fails or code is invalid
      */
     public function parse(string $code): array
     {
-        parent::parse($code);
+        $ast = $this->parser->parse($code);
+        if (!is_array($ast)) {
+            throw new Error('Failed to parse the code into an AST');
+        }
+
+        /** @var Node[] $ast */
+        $this->traverser->traverse($ast);
 
         return [
             'allExceptions' => $this->allExceptions,
@@ -95,9 +102,7 @@ class ExceptionParser extends AbstractParser
     }
 
     /**
-     * Gets the collected all exceptions.
-     *
-     * @return array
+     * @return array<string, string[]>
      */
     public function getAllExceptions(): array
     {
@@ -105,9 +110,7 @@ class ExceptionParser extends AbstractParser
     }
 
     /**
-     * Gets the collected HTTP exceptions.
-     *
-     * @return array
+     * @return array<string, string[]>
      */
     public function getHttpExceptions(): array
     {

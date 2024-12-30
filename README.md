@@ -17,14 +17,9 @@ The package provides an `ExceptionExtractor` class that analyzes PHP files to ex
 ```php
 use App\ExceptionExtractor;
 
-// Initialize with array of files to parse
-$filesToParse = [
-    __DIR__ . '/src/Controller/UserController.php',
-    __DIR__ . '/src/Controller/ProductController.php'
-];
 
-$extractor = new ExceptionExtractor($filesToParse);
-$exceptions = $extractor->extract();
+$extractor = new ExceptionExtractor();
+$exceptions = $extractor->extract('/src/Controller/UserController.php');
 ```
 
 ## Examples

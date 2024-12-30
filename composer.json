@@ -5,13 +5,20 @@
             "OasHttpExceptionExtractor\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "OasHttpExceptionExtractor\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Krzysztof Madeński"
         }
     ],
     "require-dev": {
-        "symfony/http-kernel": "^6.4"
+        "symfony/http-kernel": "^6.4",
+        "phpunit/phpunit": "^10.4",
+        "friendsofphp/php-cs-fixer": "^3.66"
     },
     "require": {
         "nikic/php-parser": "^5.3"
