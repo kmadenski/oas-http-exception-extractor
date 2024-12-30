@@ -2,19 +2,21 @@
 
 namespace OasHttpExceptionExtractor\Parser;
 
-class MethodExceptionsDTO
+class MethodExceptions
 {
 
     /**
-     * @param string $source
      * @param string $method
      * @param array<string> $exceptions
      */
     public function __construct(
-        public string $source,
         public string $method,
         public array  $exceptions
     )
     {
+    }
+
+    public static function empty(string $method): self{
+        return new self($method, []);
     }
 }

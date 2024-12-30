@@ -5,11 +5,11 @@ namespace OasHttpExceptionExtractor\Parser;
 class ClassExceptions
 {
     /**
-     * @var array<MethodExceptionsDTO>
+     * @var array<MethodExceptions>
      */
     private array $methods = [];
 
-    public function addMethodException(MethodExceptionsDTO $methodExceptionsDTO): self
+    public function addMethodException(MethodExceptions $methodExceptionsDTO): self
     {
         $this->methods[] = $methodExceptionsDTO;
         return $this;
@@ -17,10 +17,9 @@ class ClassExceptions
 
     /**
      * @param string $methodName
-     * @return MethodExceptionsDTO
-     * @throws \RuntimeException
+     * @return MethodExceptions
      */
-    public function getMethodExceptions(string $methodName): MethodExceptionsDTO
+    public function getMethodExceptions(string $methodName): MethodExceptions
     {
         foreach ($this->methods as $methodException) {
             if ($methodException->method === $methodName) {
@@ -28,7 +27,7 @@ class ClassExceptions
             }
         }
 
-        throw new \RuntimeException("No method exceptions found for method: {$methodName}");
+        return MethodExceptions::empty($methodName);
     }
 
 }
