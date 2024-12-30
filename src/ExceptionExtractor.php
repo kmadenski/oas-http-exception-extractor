@@ -2,6 +2,7 @@
 
 namespace OasHttpExceptionExtractor;
 
+use OasHttpExceptionExtractor\Parser\ExceptionsDTO;
 use OasHttpExceptionExtractor\Parser\Visitor\ExceptionResolver;
 use PhpParser\Error;
 use PhpParser\NodeTraverser;
@@ -50,14 +51,18 @@ class ExceptionExtractor
             $exceptions = $exceptionResolver->getExceptions();
             $nameContext = $nameResolver->getNameContext();
             foreach ($exceptions as $method => $methodExceptions) {
+                $founded = [];
                 foreach ($methodExceptions as $exception) {
-                    $className = $nameResolver->getNameContext()->getResolvedClassName($exception);
+                    $className = $nameContext->getResolvedClassName($exception);
                     if (class_exists($className->name)) {
                         $isSubclass = is_subclass_of($className->name, \Symfony\Component\HttpKernel\Exception\HttpException::class);
                         if ($isSubclass) {
-                            $result[] = $className->name;
+                            $founded[] = $className->name;
                         }
                     }
+                }
+                if(!empty($founded)){
+                    $result[] = new ExceptionsDTO($source, $method, $founded);
                 }
             }
 
