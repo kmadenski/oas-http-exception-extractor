@@ -2,7 +2,7 @@
 
 namespace OasHttpExceptionExtractor;
 
-use OasHttpExceptionExtractor\Parser\ExceptionsDTO;
+use OasHttpExceptionExtractor\Parser\MethodExceptionsDTO;
 use OasHttpExceptionExtractor\Parser\Visitor\ExceptionResolver;
 use PhpParser\Error;
 use PhpParser\NodeTraverser;
@@ -62,7 +62,7 @@ class ExceptionExtractor
                     }
                 }
                 if(!empty($founded)){
-                    $result[] = new ExceptionsDTO($source, $method, $founded);
+                    $result[] = new MethodExceptionsDTO($source, $method, $founded);
                 }
             }
 

@@ -2,7 +2,7 @@
 
 namespace OasHttpExceptionExtractor\Parser;
 
-class ExceptionsDTO
+class MethodExceptionsDTO
 {
 
     /**
