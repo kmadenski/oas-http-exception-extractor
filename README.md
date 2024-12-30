@@ -21,7 +21,7 @@ use App\ExceptionExtractor;
 $extractor = new ExceptionExtractor();
 $exceptions = $extractor->extract('/src/Controller/UserController.php');
 ```
-Example of usage with Symfony https://github.com/kmadenski/s15540_openapi_exception_extractor_demo_poc/blob/main/README.md
+Example of usage with Symfony [https://github.com/kmadenski/s15540_openapi_exception_extractor_demo_poc/blob/main](https://github.com/kmadenski/s15540_openapi_exception_extractor_demo_poc/tree/main)
 ## Examples
 
 The package includes example files demonstrating different exception scenarios:
