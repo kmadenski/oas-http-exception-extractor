@@ -26,9 +26,9 @@ class ExceptionExtractor
         $this->parser = new ExceptionParser();
 
         $this->validateFile($fileToParse);
-        $code = $this->readFile($fileToParse);
+        $code        = $this->readFile($fileToParse);
         $parseResult = $this->parseCode($code);
-        
+
         return $this->buildResult($parseResult['httpExceptions']);
     }
 
@@ -77,7 +77,7 @@ class ExceptionExtractor
     private function buildResult(array $httpExceptions): ClassExceptions
     {
         $result = new ClassExceptions();
-        
+
         foreach ($httpExceptions as $method => $exceptions) {
             if (!empty($exceptions)) {
                 $result->addMethodException(new MethodExceptions($method, $exceptions));

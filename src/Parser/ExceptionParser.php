@@ -23,14 +23,14 @@ class ExceptionParser
 
     /** @var array<string, string[]> Map of method names to their thrown exceptions */
     private array $allExceptions = [];
-    
+
     /** @var array<string, string[]> Map of method names to their HTTP exceptions */
     private array $httpExceptions = [];
 
     public function __construct()
     {
-        $this->parser = (new ParserFactory())->createForHostVersion();
-        $this->traverser = new NodeTraverser();
+        $this->parser       = (new ParserFactory())->createForHostVersion();
+        $this->traverser    = new NodeTraverser();
         $this->nameResolver = new NameResolver();
 
         // NameResolver must be added first to resolve names before our visitor
@@ -43,7 +43,7 @@ class ExceptionParser
      */
     public function initializeMethod(string $methodName): void
     {
-        $this->allExceptions[$methodName] ??= [];
+        $this->allExceptions[$methodName]  ??= [];
         $this->httpExceptions[$methodName] ??= [];
     }
 
@@ -72,7 +72,7 @@ class ExceptionParser
             return is_subclass_of($exceptionClass, HttpException::class);
         }
 
-        return str_starts_with($exceptionClass, '\\Symfony\\Component\\HttpKernel\\Exception\\') 
+        return str_starts_with($exceptionClass, '\\Symfony\\Component\\HttpKernel\\Exception\\')
             && str_ends_with($exceptionClass, 'HttpException');
     }
 
@@ -96,7 +96,7 @@ class ExceptionParser
         $this->traverser->traverse($ast);
 
         return [
-            'allExceptions' => $this->allExceptions,
+            'allExceptions'  => $this->allExceptions,
             'httpExceptions' => $this->httpExceptions,
         ];
     }

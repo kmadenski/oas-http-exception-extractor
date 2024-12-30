@@ -18,13 +18,13 @@ use PhpParser\NodeVisitorAbstract;
 class ExceptionVisitor extends NodeVisitorAbstract
 {
     private ?string $currentMethod = null;
-    private array $exceptions = [];
+    private array $exceptions      = [];
     private ExceptionParser $parser;
     private NameResolver $nameResolver;
 
     public function __construct(ExceptionParser $parser, NameResolver $nameResolver)
     {
-        $this->parser = $parser;
+        $this->parser       = $parser;
         $this->nameResolver = $nameResolver;
     }
 
@@ -32,11 +32,13 @@ class ExceptionVisitor extends NodeVisitorAbstract
     {
         if ($node instanceof ClassMethod) {
             $this->handleClassMethodEnter($node);
+
             return null;
         }
 
         if ($node instanceof Throw_) {
             $this->handleThrowStatement($node);
+
             return null;
         }
 

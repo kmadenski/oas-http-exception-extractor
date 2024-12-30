@@ -18,6 +18,7 @@ class ClassExceptions
     public function addMethodException(MethodExceptions $methodExceptions): self
     {
         $this->methods[] = $methodExceptions;
+
         return $this;
     }
 

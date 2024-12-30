@@ -53,6 +53,11 @@ The package uses Docker for development. To set up the development environment:
 docker-compose up -d
 ```
 
+```bash
+vendor/bin/php-cs-fixer fix --config=./php-cs-fixer.dist.php
+vendor/bin/phpunit
+```
+
 ## Note
 
 The `index.php` file in the root directory is only for demonstration purposes and can be safely removed when using this package as a dependency.

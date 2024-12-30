@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace OasHttpExceptionExtractor\Tests;
 
 use OasHttpExceptionExtractor\ExceptionExtractor;
-use OasHttpExceptionExtractor\Model\ClassExceptions;
-use OasHttpExceptionExtractor\Model\MethodExceptions;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -23,7 +21,7 @@ class ExceptionExtractorTest extends TestCase
     public function testExtractFromInvokableController(): void
     {
         $result = $this->extractor->extract('/app/tests/examples/1-invokable-single-method-controller.php');
-        
+
         $methodExceptions = $result->getMethodExceptions('__invoke');
         $this->assertTrue($methodExceptions->hasExceptions());
         $this->assertCount(1, $methodExceptions->exceptions);
@@ -33,7 +31,7 @@ class ExceptionExtractorTest extends TestCase
     public function testExtractFromMultipleMethodController(): void
     {
         $result = $this->extractor->extract('/app/tests/examples/2-multiple-method-controller.php');
-        
+
         // Test methodFour (NotFoundHttpException)
         $methodFourExceptions = $result->getMethodExceptions('methodFour');
         $this->assertTrue($methodFourExceptions->hasExceptions());

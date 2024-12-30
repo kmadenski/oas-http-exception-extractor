@@ -9,7 +9,7 @@ class MyClass
 {
     public function methodOne()
     {
-        throw new \InvalidArgumentException("Invalid argument provided.");
+        throw new \InvalidArgumentException('Invalid argument provided.');
     }
 
     public function methodTwo()
@@ -20,18 +20,18 @@ class MyClass
     public function methodThree()
     {
         if ($this->somethingWrong()) {
-            throw new \RuntimeException("Runtime error occurred.");
+            throw new \RuntimeException('Runtime error occurred.');
         }
     }
 
     public function methodFour()
     {
-        throw new NotFoundHttpException("Resource not found.");
+        throw new NotFoundHttpException('Resource not found.');
     }
 
     public function methodFive()
     {
-        throw new AccessDeniedHttpException("Access denied.");
+        throw new AccessDeniedHttpException('Access denied.');
     }
 
     private function somethingWrong()
